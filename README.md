@@ -1,14 +1,17 @@
-HANGGARIN TASK MANAGER
-======================
+HANGARIN TASK MANAGER: Your Efficient Productivity Hub
 
-A simple and efficient web-based task management application that helps you organize your tasks, track progress, and stay productive.
+A simple yet robust web-based task management application built with Django. Hangarín is designed to be your central command center for staying productive, helping you efficiently organize, track, and execute your daily tasks and long-term projects.
 
-MAIN FEATURES:
-- Create and manage tasks with categories and priorities
-- Break tasks into subtasks
-- Add notes and details
-- Track completion progress
-- User authentication with social login (Google/GitHub)
-- Clean and responsive interface
+Core Capabilities:
 
-Built with Django, Bootstrap, and modern web technologies.
+Custom Organization: Define and manage tasks using flexible categories and personalized priority levels.
+
+Hierarchy Management: Utilize subtasks to decompose complex items into smaller, manageable steps.
+
+Rich Context: Attach detailed notes and supplementary information directly to any task.
+
+Visual Tracking: Monitor completion percentages and track the overall progress of your workload.
+
+Secure Access: Implement reliable user authentication, including convenient social login options (Google/GitHub).
+
+Universal Design: Features a clean, modern, and fully responsive interface for use on desktop or mobile.
