@@ -1,0 +1,318 @@
+{% load static %}
+{% load pwa %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% progressive_web_app_meta %}
+    <title>{% block title %}Hangarin - Task Manager{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ready.css' %}">
+    <link rel="stylesheet" href="{% static 'css/demo.css' %}">
+    
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --light-color: #ecf0f1;
+            --text-light: #bdc3c7;
+            --text-dark: #2c3e50;
+            --border-color: #e3e3e3;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .sidebar {
+            background: var(--primary-color);
+            min-height: 100vh;
+            position: fixed;
+            width: 250px;
+            z-index: 1000;
+        }
+        
+        .sidebar .logo {
+            padding: 20px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar .logo a {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .sidebar .nav {
+            padding: 15px 0;
+        }
+        
+        .sidebar .nav-item {
+            margin-bottom: 5px;
+        }
+        
+        .sidebar .nav-link {
+            color: var(--text-light);
+            padding: 12px 20px;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar .nav-link:hover,
+        .sidebar .nav-item.active .nav-link {
+            color: white;
+            background: var(--secondary-color);
+            border-left-color: var(--accent-color);
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: white;
+            box-shadow: var(--shadow);
+            padding: 15px 20px;
+        }
+        
+        .navbar-brand {
+            color: var(--text-dark) !important;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+        
+        .search-box {
+            max-width: 300px;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .username {
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background: var(--light-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+        
+        .card-category {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+    <style>
+        /* Add splash screen animations */
+        @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
+        }
+    
+        .fade-out {
+        opacity: 0 !important;
+        pointer-events: none;
+        transition: opacity 0.5s ease !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="splash-screen" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+    ">
+    <img src="{% static 'img/icon-512.jpeg' %}" alt="Hangarin Icon" style="
+            width: 100px;
+            height: 100px;
+            animation: fadeIn 1s;
+    ">
+    </div>
+
+    <script>
+        // Hide splash screen - Only show on homepage
+        document.addEventListener('DOMContentLoaded', function() {
+            const splashScreen = document.getElementById('splash-screen');
+        
+        // Check if this is homepage (Dashboard)
+            const isHomepage = window.location.pathname === '/' || 
+                          window.location.pathname === '/home' || 
+                          window.location.pathname === '{% url "home" %}';
+        
+            if (isHomepage && splashScreen) {
+            // Show on homepage for 2 seconds
+                setTimeout(function() {
+                    splashScreen.classList.add('fade-out');
+                    setTimeout(function() {
+                        splashScreen.remove();
+                    }, 500);
+                }, 2000);
+            } else if (splashScreen) {
+                splashScreen.style.display = 'none';
+            }
+        });
+    </script>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-wrapper">
+                <div class="logo">
+                    <a href="{% url 'home' %}" style="display: flex; align-items: center; gap: 10px;">
+                        <img src="{% static 'img/icon-192.jpeg' %}" alt="Hangarin Icon" style="width: 30px; height: 30px;">
+                        <span>Hangarin</span>
+                    </a>
+                </div>
+                
+                <ul class="nav flex-column">
+                    <li class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <i class="la la-dashboard"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item {% if 'task' in request.resolver_match.url_name %}active{% endif %}">
+                        <a class="nav-link" href="{% url 'task-list' %}">
+                            <i class="la la-tasks"></i>
+                            Tasks
+                        </a>
+                    </li>
+                    <li class="nav-item {% if 'subtask' in request.resolver_match.url_name %}active{% endif %}">
+                        <a class="nav-link" href="{% url 'subtask-list' %}">
+                            <i class="la la-list-ol"></i>
+                            SubTasks
+                        </a>
+                    </li>
+                    <li class="nav-item {% if 'note' in request.resolver_match.url_name %}active{% endif %}">
+                        <a class="nav-link" href="{% url 'note-list' %}">
+                            <i class="la la-sticky-note"></i>
+                            Notes
+                        </a>
+                    </li>
+                    <li class="nav-item {% if 'category' in request.resolver_match.url_name %}active{% endif %}">
+                        <a class="nav-link" href="{% url 'category-list' %}">
+                            <i class="la la-folder"></i>
+                            Categories
+                        </a>
+                    </li>
+                    <li class="nav-item {% if 'priority' in request.resolver_match.url_name %}active{% endif %}">
+                        <a class="nav-link" href="{% url 'priority-list' %}">
+                            <i class="la la-flag"></i>
+                            Priorities
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- User Menu -->
+                <div class="user-menu p-3 mt-auto border-top border-secondary">
+                    {% if user.is_authenticated %}
+                        <span class="username text-light">Welcome, {{ user.username }}</span>
+                        <a href="{% url 'account_logout' %}" class="btn btn-outline-light btn-sm">Logout</a>
+                    {% else %}
+                        <a href="{% url 'account_login' %}" class="btn btn-primary btn-sm">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Navigation -->
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="{% url 'home' %}">
+                        {% block page_title %}Dashboard{% endblock %}
+                    </a>
+                    
+                    <div class="d-flex align-items-center">
+                        <!-- Search Form -->
+                        <form class="me-3" action="{% url 'task-list' %}" method="get">
+                            <div class="input-group search-box">
+                                <input type="text" class="form-control" placeholder="Search tasks..." 
+                                       name="q" value="{{ request.GET.q }}">
+                                <button class="btn btn-outline-secondary" type="submit">
+                                    <i class="la la-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <span class="text-muted">Hangarin Task Manager</span>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="content">
+                <div class="container-fluid">
+                    {% block content %}
+                    <!-- Page-specific content will go here -->
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="{% static 'js/core/jquery.3.2.1.min.js' %}"></script>
+    <script src="{% static 'js/core/popper.min.js' %}"></script>
+    <script src="{% static 'js/core/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/ready.min.js' %}"></script>
+</body>
+</html>
